@@ -10,7 +10,7 @@ import (
 type cliCommand struct {
 	name        string
 	description string
-	callback    func()
+	callback    func(cfg *config) error
 }
 
 func getCommands() map[string]cliCommand {
@@ -25,10 +25,20 @@ func getCommands() map[string]cliCommand {
 			description: "Exits the application gracefully.",
 			callback:    exitCommand,
 		},
+		"map": {
+			name:        "map",
+			description: "Lists out locations in the pokemon world.",
+			callback:    mapCommand,
+		},
+		"mapb": {
+			name:        "mapb",
+			description: "List the previous page of location areas.",
+			callback:    mapBackCommand,
+		},
 	}
 }
 
-func startRepl() {
+func startRepl(cfg *config) {
 	const PROMPT = "> "
 	scanner := bufio.NewScanner(os.Stdin)
 	commands := getCommands()
@@ -52,7 +62,11 @@ func startRepl() {
 			continue
 		}
 
-		command.callback()
+		err := command.callback(cfg)
+		if err != nil {
+			fmt.Println(err)
+			continue
+		}
 	}
 }
 
