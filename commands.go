@@ -1,11 +1,12 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"os"
 )
 
-func helpCommand(cfg *config) error {
+func helpCommand(cfg *config, args ...string) error {
 	fmt.Println("Welcome to the Pokedex!")
 	fmt.Println("This is a Pokedex built into the CLI.")
 	fmt.Println("Available Commands:")
@@ -17,13 +18,13 @@ func helpCommand(cfg *config) error {
 	return nil
 }
 
-func exitCommand(cfg *config) error {
+func exitCommand(cfg *config, args ...string) error {
 	fmt.Println("Closing the Pokedex... Goodbye!")
 	os.Exit(0)
 	return nil
 }
 
-func mapCommand(cfg *config) error {
+func mapCommand(cfg *config, args ...string) error {
 	res, err := cfg.pokeAPIClient.ListLocationAreas(cfg.nextLocationAreaURL)
 	if err != nil {
 		return err
@@ -39,7 +40,7 @@ func mapCommand(cfg *config) error {
 	return nil
 }
 
-func mapBackCommand(cfg *config) error {
+func mapBackCommand(cfg *config, args ...string) error {
 	if cfg.previousLocationAreaURL == nil {
 		return fmt.Errorf("no previous page")
 	}
@@ -55,6 +56,26 @@ func mapBackCommand(cfg *config) error {
 
 	cfg.nextLocationAreaURL = res.Next
 	cfg.previousLocationAreaURL = res.Previous
+
+	return nil
+}
+
+func exploreCommand(cfg *config, args ...string) error {
+	if len(args) != 1 {
+		return errors.New("no location area provided")
+	}
+
+	locationAreaName := args[0]
+	location, err := cfg.pokeAPIClient.GetLocationArea(locationAreaName)
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf("Exploring %s...\n", location.Name)
+	fmt.Println("Found pokemon:")
+	for _, pokemon := range location.PokemonEncounters {
+		fmt.Printf(" - '%s'\n", pokemon.Pokemon.Name)
+	}
 
 	return nil
 }
