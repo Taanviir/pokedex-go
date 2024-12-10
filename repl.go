@@ -40,6 +40,11 @@ func getCommands() map[string]cliCommand {
 			description: "List out all the pokemon roaming in the area.",
 			callback:    exploreCommand,
 		},
+		"catch": {
+			name:        "catch <pokemon_name>",
+			description: "Random chance to catch the pokemon and add to the pokedex.",
+			callback:    catchCommand,
+		},
 	}
 }
 
@@ -54,7 +59,6 @@ func startRepl(cfg *config) {
 		scanner.Scan()
 		text := scanner.Text()
 
-		fmt.Println(">>>>>>>>>>>>>>>>>>>>>>>>>> command entered " + text)
 		tokens := cleanInput(text)
 		if len(tokens) == 0 {
 			continue
