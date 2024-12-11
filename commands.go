@@ -120,8 +120,8 @@ func inspectCommand(cfg *config, args ...string) error {
 
 	cfg.caughtPokemon[pokemonName] = pokemon
 	fmt.Println("Name:" + pokemon.Name)
-	fmt.Println("Weight:" + string(pokemon.Weight))
-	fmt.Println("Height:" + string(pokemon.Height))
+	fmt.Printf("Weight: %v\n", pokemon.Weight)
+	fmt.Printf("Height: %v\n", pokemon.Height)
 	fmt.Println("Stats:")
 	for _, stat := range pokemon.Stats {
 		fmt.Printf("  - %s: %v\n", stat.Stat.Name, stat.BaseStat)
